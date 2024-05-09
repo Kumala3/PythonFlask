@@ -9,6 +9,11 @@ def no_content():
     return ({"message": "No content found"}, 204)
 
 
+@app.errorhandler(404)
+def not_found(error):
+    return {"message": "Resource not found"}, 404
+
+
 @app.route("/data")
 def get_data():
     try:
