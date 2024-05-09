@@ -3,6 +3,7 @@ from fake_db import data
 
 app = Flask(__name__)
 
+
 @app.route("/no_content", methods=["GET"])
 def no_content():
     return ({"message": "No content found"}, 204)
@@ -19,7 +20,7 @@ def get_data():
         return {"message": "Data not found"}, 404
 
 
-@app.route("/name_search")
+@app.route("/name_search", methods=["GET"])
 def name_search():
     first_name = request.args.get("q")
 
@@ -35,12 +36,12 @@ def name_search():
         return {"message": f"An error occurred: {e}"}, 500
 
 
-@app.route("/count_users")
+@app.route("/count_users", methods=["GET"])
 def count_users():
     return {"message": f"Total number of users is {len(data)}"}
 
 
-@app.route("/person")
+@app.route("/person/<uuid:uuid>", methods=["GET"])
 def find_person_by_id(uuid):
     id = str(uuid)
 
@@ -53,12 +54,16 @@ def find_person_by_id(uuid):
         return {"message": f"An error occurred: {e}"}, 500
 
 
-@app.route("/delete_user")
-def delete_user():
-    id = request.args.get("id")
+@app.route("/person/<uuid:uuid>", methods=["DELETE"])
+def delete_user_by_id(uuid):
+    id = str(uuid)
 
     try:
-        pass
+        for person in data:
+            if person["id"] == id:
+                data.remove(person)
+                return {"message": f"Person with id: {id} deleted"}, 200
+        return {"message": f"Person with id: {id} not found"}, 404
     except Exception as e:
         return {"message": f"An error occurred: {e}"}, 500
 
