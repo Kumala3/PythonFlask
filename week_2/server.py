@@ -68,6 +68,19 @@ def delete_user_by_id(uuid):
         return {"message": f"An error occurred: {e}"}, 500
 
 
+@app.route("/person", methods=["POST"])
+def add_by_uuid():
+    if not request.json:
+        return {"message": "No input data provided"}, 422
+
+    try:
+        person = request.json
+        data.append(person)
+        return {"message": "Person added successfully"}, 201
+    except Exception as e:
+        return {"message": f"An error occurred: {e}"}, 500
+
+
 @app.route("/exp", methods=["GET"])
 def index_explicit():
     res = make_response({"message": "Hello, World!"})
