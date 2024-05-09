@@ -30,8 +30,35 @@ def name_search():
         for person in data:
             if person["first_name"].lower() == first_name.lower():
                 return jsonify(person), 400
-                break
         return {"message": f"Person with name {first_name} not found"}, 404
+    except Exception as e:
+        return {"message": f"An error occurred: {e}"}, 500
+
+
+@app.route("/count_users")
+def count_users():
+    return {"message": f"Total number of users is {len(data)}"}
+
+
+@app.route("/person")
+def find_person_by_id(uuid):
+    id = str(uuid)
+
+    try:
+        for person in data:
+            if person["id"] == id:
+                return jsonify(person), 200
+        return {"message": f"Person with id: {id} not found"}, 404
+    except Exception as e:
+        return {"message": f"An error occurred: {e}"}, 500
+
+
+@app.route("/delete_user")
+def delete_user():
+    id = request.args.get("id")
+
+    try:
+        pass
     except Exception as e:
         return {"message": f"An error occurred: {e}"}, 500
 
