@@ -1,4 +1,4 @@
-from flask import Flask, make_response, Request
+from flask import Flask, make_response, request, jsonify
 from fake_db import data
 
 app = Flask(__name__)
@@ -6,6 +6,34 @@ app = Flask(__name__)
 @app.route("/no_content", methods=["GET"])
 def no_content():
     return ({"message": "No content found"}, 204)
+
+
+@app.route("/data")
+def get_data():
+    try:
+        if data and len(data) > 0:
+            return {"message": f"Data of length {len(data)} found"}
+        else:
+            return {"message": "Data is empty"}, 500
+    except NameError:
+        return {"message": "Data not found"}, 404
+
+
+@app.route("/name_search")
+def name_search():
+    first_name = request.args.get("q")
+
+    if not first_name:
+        return {"message": "No first_name found in query parameters"}, 422
+
+    try:
+        for person in data:
+            if person["first_name"].lower() == first_name.lower():
+                return jsonify(person), 400
+                break
+        return {"message": f"Person with name {first_name} not found"}, 404
+    except Exception as e:
+        return {"message": f"An error occurred: {e}"}, 500
 
 
 @app.route("/exp", methods=["GET"])
@@ -16,9 +44,8 @@ def index_explicit():
 
 
 @app.route("/", methods=["GET"])
-def general(request: Request):
-    first_name = request.query.get("first_name")
-    return {"message": f"Hello, {first_name}"}
+def general():
+    return {"message": "Hello, World!"}
 
 
 if __name__ == "__main__":
